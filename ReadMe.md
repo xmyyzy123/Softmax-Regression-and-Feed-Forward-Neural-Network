@@ -137,3 +137,12 @@ For the given dataset softmax regression classifier is performing better than th
 
 
 
+### Other Resource
+
+* https://github.com/karan6181/Softmax-Classifier
+* https://github.com/sjdonado/multiclass-classifiers
+
+### Note:
+
+* **class index must start from 0.**
+* **class last column is class index.**

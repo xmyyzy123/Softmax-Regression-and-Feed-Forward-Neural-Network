@@ -22,11 +22,13 @@ class SoftmaxRegression:
         with open(file_name) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
+                #print(row)
                 y.append(int(row.pop()))  # Remove the pre-classified label info
                 X.append([float(i) for i in row])
         # Convert the arrays to numpy arrays for further analysis
         X = np.array(X)
         y = np.array(y)
+
         return [X, y]
     
     def one_hot_vector(self, y):
@@ -45,12 +47,16 @@ class SoftmaxRegression:
         '''
         Method to calculate probabilities of belonging to any of the k classes
         '''
+        #print(z)
         return np.exp(z)/np.sum(np.exp(z), axis=1, keepdims=True)
     
     def cost_theta(self, probs, n_samples, X, y):
         '''
         Method to calculate cost for theta matrix
         '''
+        # print(probs)
+        # print(n_samples)
+        # print(y)
         probs[np.arange(n_samples),y] -= 1
         probs /= n_samples
         theta_update = np.transpose(X).dot(probs)
@@ -83,6 +89,9 @@ class SoftmaxRegression:
         X, y = self.read_file(train_file)
         # Get useful parameters
         n_features, n_samples, n_classes = X.shape[1], X.shape[0], len(np.unique(y))   
+        print("features: %d" % n_features)
+        print("samples: %d" % n_samples)
+        print("classes: %d" % n_classes)
         # Initialize theta matrix and bias vector as zeroes
         self.theta = np.zeros((n_features, n_classes))
         self.biases = np.zeros((1, n_classes))
@@ -99,7 +108,16 @@ class SoftmaxRegression:
         Method to predict the class of a given input vector
         '''
         y_pred = np.dot(X, self.theta)+self.biases
+        probs = self.softmax_probability(y_pred)
+        with open("result.txt", "w") as f:
+            for p in probs:
+                print(p)
+                for i in p:
+                    f.write(str(i) + " ")
+                f.write("\n")
+           
         y_pred = np.argmax(y_pred, axis=1)
+        #print(y_pred)
         return y_pred
     
     def accuracy(self, file_name):
@@ -110,7 +128,7 @@ class SoftmaxRegression:
         return np.mean(self.predict(X)==y)
 
 if __name__ == "__main__":
-    classifier = SoftmaxRegression(learning_rate=0.1)
-    classifier.train('training1.csv', epochs=500)
-    print("Train Set Accuracy: ", classifier.accuracy('training1.csv'))
-    print("Test Set Accuracy: ", classifier.accuracy('test1.csv'))
+    classifier = SoftmaxRegression(learning_rate=0.001)
+    classifier.train('train.csv', epochs=10000)
+    #print("Train Set Accuracy: ", classifier.accuracy('train.csv'))
+    print("Test Set Accuracy: ", classifier.accuracy('test.csv'))
